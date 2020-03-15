@@ -8,6 +8,12 @@ import time
 #Creation de l'objet python pour manipuler le robot
 poppy = PoppyErgoJr()
 
+
+
+#Affichage de la position actuelle de touts les moteurs
+
+print(str(poppy.m1.present_position)+","+str(poppy.m2.present_position)+","+str(poppy.m3.present_position)+","+str(poppy.m4.present_position)+","+str(poppy.m5.present_position)+","+str(poppy.m6.present_position))
+
 #AU SECOURS MET LES MOTEURS AU REPOS
 
 def ausecours():
@@ -58,45 +64,50 @@ def desactiveTousLesMoteurs():
         m.compliant = True
     
 #Fonction pour deplacer les moteurs a la position voulue
-def nouvellePosition(p1,p2,p3,p4,p5,p6,v):
-    poppy.m1.moving_speed = v
-    poppy.m1.goal_position = p1
-    poppy.m2.moving_speed = v
-    poppy.m2.goal_position = p2
-    poppy.m3.moving_speed = v
-    poppy.m3.goal_position = p3
-    poppy.m4.moving_speed = v
-    poppy.m4.goal_position = p4
-    poppy.m5.moving_speed = v
-    poppy.m5.goal_position = p5
-    poppy.m6.moving_speed = v
-    poppy.m6.goal_position = p6
-
+def nouvellePosition(p1,p2,p3,p4,p5,p6,temps):
+    new_pos = {'m1': p1, 'm2': p2, 'm3': p3, 'm4': p4, 'm5': p5, 'm6': p6}
+    poppy.goto_position(new_pos,temps,wait = True)
+    
+    
 #Prends un pion en choisissant la hauteur (5: le pion le plus haut, 1: le pion le plus bas)
 def prendsPion(h):
     activeTousLesMoteurs()
+    #Leve toi
+    print("Position veticale")
+    nouvellePosition(-72.29,-6.3,7.48,0.44,89.88,20,1) 
     if (h == 5):
-        nouvellePosition(-45.89,-6.89,8.36,-21.26,-70.82,26.25,60) 
-        time.sleep(5)
+        print("Deplacement vers le haut de la pile")
+        nouvellePosition(-69.35,-5.43,13.64,-1.32,-71.11,15.4,2) 
+  
 
 #serrage de la pince
 def serrePion():
-    poppy.m6.moving_speed = 80
-    poppy.m6.goal_position = 7.5
+    poppy.m6.goto_position(0,0.5,wait = True)
+    nouvellePosition(-72.29,-6.3,7.48,0.44,89.88,0,1) 
     
 # deserrage de la pince
 def deserrePion():
-    poppy.m6.moving_speed = 80
-    poppy.m6.goal_position = 24
+    poppy.m6.goto_position(24,1,wait = True)
+
+
+#----------------------------------------------------------
+#----------------------------------------------------------
+#----------------------------------------------------------
+#----------------------------------------------------------
 
 
 
 #Code principal
 prendsPion(5)
+print("Serre Pion")
 serrePion()
-time.sleep(2)
-nouvellePosition(-111.29,-48.83,48.83,-22.43,20.67,-14.52,60) 
-time.sleep(2)
+print("Leve le pion")
+
+nouvellePosition(-111.29,-48.83,48.83,-22.43,20.67,-14.52,1) 
+print("Dessere le pion")
+
 deserrePion()
+print("Attends 2 secondes")
 time.sleep(2)
+print("Repos")
 ausecours()
